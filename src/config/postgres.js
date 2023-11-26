@@ -1,15 +1,23 @@
-const { Sequelize } = require("sequelize");
+const Sequelize = require("sequelize");
 require("dotenv").config();
 
 const Postgres = new Sequelize({
    dialect: "postgres",
-   host: "localhost",
-   username: "your_pg_user",
-   password: "your_pg_password",
-   database: "your_pg_database",
+   host: process.env.PG_HOST,
+   username: process.env.PG_USERNAME,
+   password: process.env.PG_PASSWORD,
+   database: process.env.PG_DATABASE,
    define: {
-      timestamps: false, // Disable Sequelize's default timestamps
+      timestamps: true,
    },
 });
 
-module.exports = Postgres;
+Postgres.authenticate()
+   .then(() => {
+      console.log("Connected to Postgres successfully!");
+   })
+   .catch((error) => {
+      console.error("Unable to connect to the database: ", error.message);
+   });
+
+module.exports = { Postgres };

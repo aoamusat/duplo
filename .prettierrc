@@ -1,3 +1,11 @@
 {
-    "tabWidth": 3
-}
+    "tabWidth": 3,
+    "overrides": [
+        {
+            "files": ["*.ts", "*.tsx"],
+            "options": {
+                "parser": "typescript"
+            }
+        }
+    ]
+}  

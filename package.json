@@ -22,6 +22,7 @@
     "sequelize": "^6.35.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.3.1",
     "concurrently": "^8.2.2",
     "nodemon": "^3.0.1",
     "prettier": "^3.1.0",

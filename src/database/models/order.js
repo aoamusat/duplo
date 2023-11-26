@@ -16,6 +16,10 @@ Order.init(
          type: DataTypes.INTEGER,
          allowNull: false,
       },
+      amount: {
+         type: DataTypes.DECIMAL(10, 2),
+         allowNull: false,
+      },
       status: {
          type: DataTypes.ENUM(["SUCCESS", "PENDING", "FAILED"]),
          defaultValue: "PENDING",

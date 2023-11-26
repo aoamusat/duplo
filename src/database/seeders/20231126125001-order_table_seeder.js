@@ -17,6 +17,7 @@ module.exports = {
          orders.push({
             productName: faker.commerce.productName(),
             quantity: Math.floor(Math.random() * 5) + 1,
+            amount: Math.floor(Math.random() * 100000) + 1000,
             status: randomStatus,
             orderReference: generateOrderRef(),
             departmentId:

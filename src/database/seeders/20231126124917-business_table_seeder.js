@@ -15,7 +15,7 @@ module.exports = {
          "Agriculture",
          "Other",
       ];
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 50000; i++) {
          const ind = industries[Math.floor(Math.random() * industries.length)];
          businesses.push({
             name: faker.company.name(),

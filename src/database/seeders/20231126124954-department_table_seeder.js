@@ -7,16 +7,20 @@ module.exports = {
    async up(queryInterface, Sequelize) {
       const businesses = await Business.findAll();
       const businessIds = businesses.map((business) => business.id);
-
+      const startDate = new Date("2023-09-01T00:00:00Z").getTime();
       const departments = [];
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 5000; i++) {
+         const now = new Date().getTime();
+         const randomDate = new Date(
+            startDate + Math.random() * (now - startDate),
+         );
          departments.push({
             name: faker.commerce.department(),
             description: faker.lorem.paragraph(1),
             businessId:
                businessIds[Math.floor(Math.random() * businessIds.length)],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            createdAt: randomDate.toISOString(),
+            updatedAt: randomDate.toISOString(),
          });
       }
 

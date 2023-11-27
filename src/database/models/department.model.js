@@ -1,7 +1,7 @@
 const { DataTypes, Model } = require("sequelize");
 const { Postgres } = require("../../config/postgres");
-const { Order } = require("./order");
-const { Business } = require("./business");
+const { Order } = require("./order.model");
+const { Business } = require("./business.model");
 
 class Department extends Model {
    static associate(models) {

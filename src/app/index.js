@@ -1,15 +1,12 @@
 require("dotenv").config();
 const express = require("express");
-const { Business } = require("../database/models/business");
+const { Order } = require("../database/models/schema/order");
+const APIRouter = require("../routes/api.route");
 
 const app = express();
 const PORT = process.env.PORT || 9001;
 
 app.use(express.json());
-
-app.get("/", async (request, response) => {
-   const biz = await Business.findAll();
-   response.json({ message: "Hello Duplo!", businesses: biz });
-});
+app.use("/api/", APIRouter);
 
 module.exports = { app, PORT };

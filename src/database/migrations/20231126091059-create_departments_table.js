@@ -37,19 +37,6 @@ module.exports = {
             defaultValue: Sequelize.NOW,
          },
       });
-
-      // Adding foreign key constraint
-      await queryInterface.addConstraint("departments", {
-         fields: ["businessId"],
-         type: "foreign key",
-         name: "fk_department_business",
-         references: {
-            table: "businesses",
-            field: "id",
-         },
-         onDelete: "cascade",
-         onUpdate: "cascade",
-      });
    },
 
    async down(queryInterface, Sequelize) {

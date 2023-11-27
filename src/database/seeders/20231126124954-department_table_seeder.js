@@ -1,6 +1,6 @@
 "use strict";
 const { faker } = require("@faker-js/faker");
-const { Business } = require("../models/business");
+const { Business } = require("../models/business.model");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {

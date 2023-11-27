@@ -1,17 +1,17 @@
 require("dotenv").config();
 
-const { Department } = require("../../database/models/department.model");
+const { Business } = require("../../database/models/business.model");
 
 const authenticate = async (request, response, next) => {
    const { apiKey } = request.headers;
-   const department = await Department.findOne({
+   const business = await Business.findOne({
       where: {
          apiKey: apiKey,
       },
    });
 
-   if (department) {
-      request.user = department;
+   if (business) {
+      request.user = business;
       return next();
    } else {
       response.status(401).json({

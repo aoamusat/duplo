@@ -5,11 +5,24 @@ const axios = require("axios");
 const { getCreditScore } = require("../utils/helpers");
 
 const apiIndex = async (request, response) => {
-   const score = await getCreditScore(11);
    return response.json({
       message: "Duplo API service!",
-      score: score,
    });
 };
 
-module.exports = { apiIndex };
+const getBusinessCreditScore = async (request, response) => {
+   try {
+      const businessId = request.user.id;
+      const score = await getCreditScore(businessId);
+      response.json({
+         creditScore: score,
+      });
+   } catch (error) {
+      console.log(error.message);
+      return response.status(500).json({
+         error: "An error occurred while processing credit score. Our team will be notified of this error.",
+      });
+   }
+};
+
+module.exports = { apiIndex, getBusinessCreditScore };

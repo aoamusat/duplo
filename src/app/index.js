@@ -7,6 +7,6 @@ const app = express();
 const PORT = process.env.PORT || 9001;
 
 app.use(express.json());
-app.use("/api/", APIRouter);
+app.use("/api/v1/", APIRouter);
 
 module.exports = { app, PORT };

@@ -1,5 +1,6 @@
 const { faker } = require("@faker-js/faker");
 const mongoose = require("mongoose");
+const crypto = require("crypto");
 const { Order } = require("../database/models/schema/order");
 const { Business } = require("../database/models/business.model");
 const { Sequelize, EmptyResultError } = require("sequelize");
@@ -42,4 +43,14 @@ const getCreditScore = async (businessId) => {
    }
 };
 
-module.exports = { generateOrderRef, getCreditScore };
+const generateAPIKey = () => {
+   const timestamp = Date.now().toString();
+   const randomBytes = crypto.randomBytes(16).toString("hex");
+   const apiKey = crypto
+      .createHash("sha256")
+      .update(timestamp + randomBytes)
+      .digest("hex");
+   return apiKey;
+};
+
+module.exports = { generateOrderRef, getCreditScore, generateAPIKey };

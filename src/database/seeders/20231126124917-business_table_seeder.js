@@ -1,5 +1,6 @@
 "use strict";
 const { faker } = require("@faker-js/faker");
+const { generateAPIKey } = require("../../utils/helpers");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -20,6 +21,7 @@ module.exports = {
             name: faker.company.name(),
             type: faker.word.noun(),
             industry: ind,
+            apiKey: generateAPIKey(),
             description: faker.lorem.paragraph(1),
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),

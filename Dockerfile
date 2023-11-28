@@ -1,5 +1,7 @@
 FROM node:16-alpine
 
+COPY --from=ghcr.io/ufoscout/docker-compose-wait:latest /wait /wait
+
 # Set the working directory in the container
 WORKDIR /usr/src/duplo
 
@@ -14,7 +16,7 @@ COPY . .
 
 # Set environment variables
 ENV PG_USERNAME=$PG_USERNAME \
-    PG_PASSWORD=$PG_PASSWORD \
+    PG_PASSWORD=$POSTGRES_PASSWORD \
     PG_DATABASE=$PG_DATABASE \
     PG_HOST=$PG_HOST \
     PG_PORT=$PG_PORT \
@@ -26,10 +28,10 @@ ENV PG_USERNAME=$PG_USERNAME \
     ENV_PROFILE=$ENV_PROFILE
 
 # Run database migrations
-RUN npx sequelize db:migrate
+# RUN npx sequelize db:migrate
 
 # Expose the port that the app will run on
-EXPOSE $PORT
+EXPOSE 80
 
 # Define the command to run your application
-CMD ["npm", "start"]
+CMD ["/wait", "&&", "npx", "sequelize", "db:migrate", "&&", "npm", "start"]

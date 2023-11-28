@@ -1,9 +1,8 @@
 const { faker } = require("@faker-js/faker");
-const mongoose = require("mongoose");
 const crypto = require("crypto");
 const { Order } = require("../database/models/schema/order");
 const { Business } = require("../database/models/business.model");
-const { Sequelize, EmptyResultError } = require("sequelize");
+const { EmptyResultError } = require("sequelize");
 const { default: axios } = require("axios");
 
 const generateOrderRef = function () {

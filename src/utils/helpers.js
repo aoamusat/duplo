@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const { Order } = require("../database/models/schema/order");
 const { Business } = require("../database/models/business.model");
 const { Sequelize, EmptyResultError } = require("sequelize");
+const { default: axios } = require("axios");
 
 const generateOrderRef = function () {
    return faker.string.uuid();
@@ -36,7 +37,7 @@ const getCreditScore = async (businessId) => {
       };
       const score =
          data.totalTransactionAmount / (data.totalTransactionCount * 100);
-      return score;
+      return Math.ceil(score);
    } catch (error) {
       console.log(error.message);
       throw new Error(error.message);
@@ -53,4 +54,19 @@ const generateAPIKey = () => {
    return apiKey;
 };
 
-module.exports = { generateOrderRef, getCreditScore, generateAPIKey };
+const logData2TaxAuthority = async (data) => {
+   try {
+      await axios.post("https://taxes.free.beeceptor.com/log-tax", data);
+   } catch (error) {
+      console.log(error.message);
+
+      // TODO: Push to queue for future retry
+   }
+};
+
+module.exports = {
+   generateOrderRef,
+   getCreditScore,
+   generateAPIKey,
+   logData2TaxAuthority,
+};

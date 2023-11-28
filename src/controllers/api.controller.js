@@ -1,10 +1,15 @@
-const { Business } = require("../database/models/business.model");
-const { Department } = require("../database/models/department.model");
 const { Order } = require("../database/models/order.model");
+const { Order: OrderSchema } = require("../database/models/schema/order");
 const axios = require("axios");
-const { getCreditScore } = require("../utils/helpers");
+const {
+   getCreditScore,
+   generateAPIKey,
+   generateOrderRef,
+   logData2TaxAuthority,
+} = require("../utils/helpers");
 const { Postgres } = require("../config/postgres");
 const { QueryTypes } = require("sequelize");
+const Joi = require("joi");
 
 const apiIndex = async (request, response) => {
    response.json({
@@ -23,6 +28,58 @@ const getBusinessCreditScore = async (request, response) => {
       console.log(error.message);
       return response.status(500).json({
          error: "An error occurred while processing credit score. Our team will be notified of this error.",
+      });
+   }
+};
+
+const createOrder = async (request, response) => {
+   // TODO
+   // - Create the order and save to PostgreSQL
+   // - Log to Order to MongoDB
+   // - Call the Tax authority with the order details
+   try {
+      const schema = Joi.object({
+         productName: Joi.string().required(),
+         quantity: Joi.number().integer().min(1).required(),
+         status: Joi.string().valid("SUCCESS", "PENDING", "FAILED").required(),
+         departmentId: Joi.number().integer().required(),
+         amount: Joi.number().precision(2).positive().required(),
+      });
+
+      const { error: errors, value: data } = schema.validate(request.body);
+
+      if (errors) {
+         response.status(400).json({
+            message: "Invalid request",
+            errors: errors.details,
+         });
+         return;
+      }
+
+      const order = await Order.create({
+         ...data,
+         apiKey: generateAPIKey(),
+         orderReference: generateOrderRef(),
+      });
+
+      await logData2TaxAuthority({
+         order_id: order.orderReference,
+         platform_code: "022",
+         order_amount: data.amount,
+      });
+
+      await OrderSchema.create({
+         businessID: request.user.id,
+         status: data.status,
+         amount: data.amount,
+         date: new Date().toISOString(),
+      });
+
+      response.json(order);
+   } catch (error) {
+      console.log(error.message);
+      response.status(500).json({
+         message: "Internal Server Error",
       });
    }
 };
@@ -63,4 +120,9 @@ WHERE
    }
 };
 
-module.exports = { apiIndex, getBusinessCreditScore, getOrderDetails };
+module.exports = {
+   apiIndex,
+   getBusinessCreditScore,
+   getOrderDetails,
+   createOrder,
+};

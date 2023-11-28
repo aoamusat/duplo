@@ -5,10 +5,22 @@ const { Business } = require("../database/models/business.model");
 const { EmptyResultError } = require("sequelize");
 const { default: axios } = require("axios");
 
+/**
+ * Generates a random order reference using the Faker library.
+ *
+ * @returns {string} The generated order reference.
+ */
 const generateOrderRef = function () {
    return faker.string.uuid();
 };
 
+/**
+ * Retrieves the credit score for a business based on its transaction history.
+ *
+ * @param {number} businessId - The ID of the business.
+ * @returns {Promise<number>} The credit score for the business.
+ * @throws {Error} If an error occurs during the process.
+ */
 const getCreditScore = async (businessId) => {
    try {
       const business = await Business.findByPk(businessId);
@@ -43,6 +55,11 @@ const getCreditScore = async (businessId) => {
    }
 };
 
+/**
+ * Generates a secure API key using a combination of timestamp and random bytes.
+ *
+ * @returns {string} The generated API key.
+ */
 const generateAPIKey = () => {
    const timestamp = Date.now().toString();
    const randomBytes = crypto.randomBytes(16).toString("hex");
@@ -53,6 +70,13 @@ const generateAPIKey = () => {
    return apiKey;
 };
 
+/**
+ * Logs data to the tax authority endpoint.
+ *
+ * @param {Object} data - The data to be logged.
+ * @returns {Promise<void>} A promise that resolves when the data is successfully logged.
+ * @throws {Error} If an error occurs during the logging process.
+ */
 const logData2TaxAuthority = async (data) => {
    try {
       await axios.post("https://taxes.free.beeceptor.com/log-tax", data);

@@ -10,12 +10,26 @@ const { Postgres } = require("../config/postgres");
 const { QueryTypes } = require("sequelize");
 const Joi = require("joi");
 
+/**
+ * Handles the API index route.
+ *
+ * @param {Object} request - The Express request object.
+ * @param {Object} response - The Express response object.
+ * @returns {void}
+ */
 const apiIndex = async (request, response) => {
    response.json({
       message: "Duplo API service!",
    });
 };
 
+/**
+ * Retrieves the credit score for the business associated with the authenticated user.
+ *
+ * @param {Object} request - The Express request object.
+ * @param {Object} response - The Express response object.
+ * @returns {void}
+ */
 const getBusinessCreditScore = async (request, response) => {
    try {
       const businessId = request.user.id;
@@ -31,11 +45,14 @@ const getBusinessCreditScore = async (request, response) => {
    }
 };
 
+/**
+ * Creates a new order, logs the order, and calls the tax authority with order details.
+ *
+ * @param {Object} request - The Express request object.
+ * @param {Object} response - The Express response object.
+ * @returns {void}
+ */
 const createOrder = async (request, response) => {
-   // TODO
-   // - Create the order and save to PostgreSQL
-   // - Log to Order to MongoDB
-   // - Call the Tax authority with the order details
    try {
       const schema = Joi.object({
          productName: Joi.string().required(),
@@ -83,19 +100,26 @@ const createOrder = async (request, response) => {
    }
 };
 
+/**
+ * Retrieves aggregated order details for the business associated with the authenticated user.
+ *
+ * @param {Object} request - The Express request object.
+ * @param {Object} response - The Express response object.
+ * @returns {void}
+ */
 const getOrderDetails = async (request, response) => {
    try {
       const businessId = request.user.id;
       const query = `SELECT COUNT
-	( * ) AS totalOrders,
-	SUM ( amount ) AS totalAmount,
-	COUNT ( CASE WHEN DATE ( orders."createdAt" ) = CURRENT_DATE THEN 1 ELSE NULL END ) AS totalOrdersToday,
-	SUM ( CASE WHEN DATE ( orders."createdAt" ) = CURRENT_DATE THEN amount ELSE 0 END ) AS totalAmountToday 
-FROM
-	orders
-	JOIN departments ON orders."departmentId" = departments."id" 
-WHERE
-	departments."businessId" = :businessId`;
+      ( * ) AS totalOrders,
+      SUM ( amount ) AS totalAmount,
+      COUNT ( CASE WHEN DATE ( orders."createdAt" ) = CURRENT_DATE THEN 1 ELSE NULL END ) AS totalOrdersToday,
+      SUM ( CASE WHEN DATE ( orders."createdAt" ) = CURRENT_DATE THEN amount ELSE 0 END ) AS totalAmountToday 
+   FROM
+      orders
+      JOIN departments ON orders."departmentId" = departments."id" 
+   WHERE
+      departments."businessId" = :businessId`;
 
       const [results, metadata] = await Postgres.query(query, {
          replacements: { businessId },
